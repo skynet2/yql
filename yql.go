@@ -178,12 +178,22 @@ func Match(rawYQL string, data map[string]interface{}) (bool, error) {
 }
 
 func compare(actualValue interface{}, expectValue []string, op string) bool {
+	actualKind := reflect.TypeOf(actualValue).Kind()
+
+	if actualKind == reflect.Func {
+		rfValue := reflect.ValueOf(actualValue).Call(nil)
+		if len(rfValue) > 0 {
+			actualValue = rfValue[0].Interface()
+		}
+	}
+
 	if len(expectValue) > 1 {
 		return compareSet(actualValue, expectValue, op)
 	}
-	if reflect.TypeOf(actualValue).Kind() == reflect.Slice {
+	if actualKind == reflect.Slice {
 		return compareSet(actualValue, expectValue, op)
 	}
+
 	e := removeQuote(expectValue[0])
 	switch actual := actualValue.(type) {
 	case int:

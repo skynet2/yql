@@ -30,11 +30,28 @@ func ExampleMatch() {
 		"score": []int{1, 2, 3, 4, 5},
 	})
 	fmt.Println(result)
+	rawYQL = `score ∩ (7,1,9,5,3)`
+	result, _ = yql.Match(rawYQL, map[string]interface{}{
+		"score": func() []int64 {
+			return []int64{3, 5, 2}
+		},
+	})
+	fmt.Println(result)
+	rawYQL = `score in (7,1,9,5,3)`
+	result, _ = yql.Match(rawYQL, map[string]interface{}{
+		"score": func() []int64 {
+			return []int64{3, 5, 2}
+		},
+	})
+	fmt.Println(result)
+
 	//Output:
 	//true
 	//true
 	//false
 	//true
+	//true
+	//false
 }
 
 func ExampleRule() {
